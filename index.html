@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento de Andaime Tubular</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Solicitação de Orçamento de Andaime Tubular</h1>
+        <form id="scaffoldForm">
+            <div class="form-group">
+                <label class="section-title">Dados do Cliente</label>
+                <div class="client-data">
+                    <div class="input-group">
+                        <label for="clientName">Nome Completo:</label>
+                        <input type="text" id="clientName" name="clientName" required placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="input-group">
+                        <label for="clientPhone">Telefone:</label>
+                        <input type="tel" id="clientPhone" name="clientPhone" required placeholder="(41) 99999-9999">
+                    </div>
+                    <div class="input-group">
+                        <label for="clientEmail">Email:</label>
+                        <input type="email" id="clientEmail" name="clientEmail" required placeholder="seu@email.com">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="section-title">Selecione o tipo de Andaime:</label>
+                <div class="scaffold-type-options">
+                    <div class="scaffold-option">
+                        <input type="radio" id="scaffoldType1x1" name="scaffoldType" value="1x1">
+                        <label for="scaffoldType1x1" class="scaffold-label">
+                            <div class="scaffold-card">
+                                <div class="scaffold-title">Andaime Tubular</div>
+                                <div class="scaffold-size">1x1m</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="scaffold-option">
+                        <input type="radio" id="scaffoldType1x150" name="scaffoldType" value="1x1.50">
+                        <label for="scaffoldType1x150" class="scaffold-label">
+                            <div class="scaffold-card">
+                                <div class="scaffold-title">Andaime Tubular</div>
+                                <div class="scaffold-size">1x1.50m</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="scaffold-option">
+                        <input type="radio" id="scaffoldType1x200" name="scaffoldType" value="1x2.00">
+                        <label for="scaffoldType1x200" class="scaffold-label">
+                            <div class="scaffold-card">
+                                <div class="scaffold-title">Andaime Tubular</div>
+                                <div class="scaffold-size">1x2.00m</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="section-title">Andaime Tubular Completo (Predefinições por altura)</label>
+            </div>
+
+            <div id="heightSelection" class="form-group">
+                <label for="scaffoldHeight">Selecione a altura:</label>
+                <select id="scaffoldHeight" name="scaffoldHeight">
+                    <!-- As opções serão carregadas dinamicamente pelo JavaScript -->
+                </select>
+            </div>
+
+            <div id="towerQuantity" class="form-group">
+                <label>Quantidade de Torres:</label>
+                <div class="quantity-control">
+                    <button type="button" id="decreaseTower">-</button>
+                    <span id="towerCount">1</span>
+                    <button type="button" id="increaseTower">+</button>
+                </div>
+            </div>
+
+            <div id="scaffoldItems">
+                <!-- Os itens do andaime serão carregados aqui pelo JavaScript -->
+            </div>
+
+            <button type="submit" class="submit-btn">Solicitar Orçamento via WhatsApp</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
