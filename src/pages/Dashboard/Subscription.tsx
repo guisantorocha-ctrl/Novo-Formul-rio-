@@ -31,10 +31,14 @@ const Subscription: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <div className="flex items-center space-x-3 mb-4">
-                <h3 className="text-2xl font-bold text-gray-900">{subscriptionData.plan}</h3>
-                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                <h3 className="text-2xl font-bold text-gray-900">Plano Profissional</h3>
+                <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${
+                  store?.subscription_status === 'active'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                }`}>
                   <CheckCircle className="w-4 h-4 mr-1" />
-                  {subscriptionData.status}
+                  {store?.subscription_status === 'active' ? 'Ativo' : 'Inativo'}
                 </div>
               </div>
               
@@ -62,15 +66,10 @@ const Subscription: React.FC = () => {
                             month: 'long',
                             year: 'numeric'
                           })
-                        : 'Não definido'
-              <h3 className="text-2xl font-bold text-gray-900">Plano Profissional</h3>
-              <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${
-                store?.subscription_status === 'active'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
-              }`}>
+                        : 'Não definido'}
+                    </p>
                   </div>
-                {store?.subscription_status === 'active' ? 'Ativo' : 'Inativo'}
+                </div>
               </div>
             </div>
             
