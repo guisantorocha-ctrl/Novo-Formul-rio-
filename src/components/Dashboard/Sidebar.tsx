@@ -1,9 +1,19 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, CreditCard, Building2 } from 'lucide-react';
+import { LayoutDashboard, FileText, CreditCard, Building2, LogOut } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
+  const { store, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const menuItems = [
     {
@@ -66,14 +76,29 @@ const Sidebar: React.FC = () => {
       </nav>
 
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-600">L</span>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-purple-600">
+                {store?.name?.charAt(0).toUpperCase() || 'L'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {store?.name || 'Sua Loja'}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {store?.subscription_status === 'active' ? 'Assinatura Ativa' : 'Assinatura Inativa'}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">Sua Loja</p>
-            <p className="text-xs text-gray-500 truncate">Gerencie seus orçamentos</p>
-          </div>
+          <button
+            onClick={handleSignOut}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+            title="Sair"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

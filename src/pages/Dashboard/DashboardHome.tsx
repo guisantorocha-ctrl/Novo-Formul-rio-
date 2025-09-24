@@ -3,24 +3,29 @@ import { FileText, Clock, CheckCircle, Calendar, Copy, ExternalLink } from 'luci
 import StatsCard from '../../components/Dashboard/StatsCard';
 import { supabase } from '../../lib/supabase';
 import { Quote } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 const DashboardHome: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
-  const [storeId] = useState('demo-store-id'); // Em produção, pegar do contexto de autenticação
+  const { store } = useAuth();
   
-  const formUrl = `${window.location.origin}/form/${storeId}`;
+  const formUrl = store ? `${window.location.origin}/form/${store.id}` : '';
 
   useEffect(() => {
-    fetchQuotes();
-  }, []);
+    if (store) {
+      fetchQuotes();
+    }
+  }, [store]);
 
   const fetchQuotes = async () => {
+    if (!store) return;
+    
     try {
       const { data, error } = await supabase
         .from('quotes')
         .select('*')
-        .eq('store_id', storeId)
+        .eq('store_id', store.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -33,12 +38,16 @@ const DashboardHome: React.FC = () => {
   };
 
   const copyFormUrl = () => {
-    navigator.clipboard.writeText(formUrl);
-    // Aqui você pode adicionar uma notificação de sucesso
+    if (formUrl) {
+      navigator.clipboard.writeText(formUrl);
+      // Aqui você pode adicionar uma notificação de sucesso
+    }
   };
 
   const testForm = () => {
-    window.open(formUrl, '_blank');
+    if (formUrl) {
+      window.open(formUrl, '_blank');
+    }
   };
 
   const totalQuotes = quotes.length;
@@ -72,7 +81,7 @@ const DashboardHome: React.FC = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Bem-vindo, Loja Demonstração!
+          Bem-vindo, {store?.name || 'Loja'}!
         </h1>
         <p className="text-gray-600">Sistema de Orçamentos de Andaimes Tubulares</p>
       </div>
@@ -106,10 +115,19 @@ const DashboardHome: React.FC = () => {
             </div>
           </div>
           <div className="ml-6">
-            <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-              Ativa
+            <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+              store?.subscription_status === 'active' 
+                ? 'bg-green-500 text-white' 
+                : 'bg-red-500 text-white'
+            }`}>
+              {store?.subscription_status === 'active' ? 'Ativa' : 'Inativa'}
             </div>
-            <p className="text-sm mt-2 opacity-90">Assinatura válida até: 14/10/2025</p>
+            <p className="text-sm mt-2 opacity-90">
+              {store?.subscription_expires_at 
+                ? `Válida até: ${new Date(store.subscription_expires_at).toLocaleDateString('pt-BR')}`
+                : 'Assinatura não ativa'
+              }
+            </p>
           </div>
         </div>
       </div>

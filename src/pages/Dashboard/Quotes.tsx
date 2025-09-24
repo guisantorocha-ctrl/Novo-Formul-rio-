@@ -2,24 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Search, Filter, Eye } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Quote } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Quotes: React.FC = () => {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [storeId] = useState('demo-store-id');
+  const { store } = useAuth();
 
   useEffect(() => {
-    fetchQuotes();
-  }, []);
+    if (store) {
+      fetchQuotes();
+    }
+  }, [store]);
 
   const fetchQuotes = async () => {
+    if (!store) return;
+    
     try {
       const { data, error } = await supabase
         .from('quotes')
         .select('*')
-        .eq('store_id', storeId)
+        .eq('store_id', store.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;

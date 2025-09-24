@@ -1,14 +1,9 @@
 import React from 'react';
 import { CreditCard, Calendar, CheckCircle, RefreshCw } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Subscription: React.FC = () => {
-  const subscriptionData = {
-    plan: 'Plano Profissional',
-    status: 'Ativo',
-    price: 'R$ 99,90',
-    expiresAt: '14 de outubro de 2025',
-    nextBilling: '14 de novembro de 2024'
-  };
+  const { store } = useAuth();
 
   const paymentHistory = [
     { date: '15/06/2024', description: 'Mensalidade - Plano Profissional', amount: '99,90', status: 'Pago' },
@@ -50,7 +45,7 @@ const Subscription: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Valor Mensal</p>
-                    <p className="text-xl font-bold text-gray-900">{subscriptionData.price}</p>
+                    <p className="text-xl font-bold text-gray-900">R$ 99,90</p>
                   </div>
                 </div>
                 
@@ -60,9 +55,22 @@ const Subscription: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Expira em</p>
-                    <p className="text-xl font-bold text-gray-900">{subscriptionData.expiresAt}</p>
+                    <p className="text-xl font-bold text-gray-900">
+                      {store?.subscription_expires_at 
+                        ? new Date(store.subscription_expires_at).toLocaleDateString('pt-BR', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })
+                        : 'Não definido'
+              <h3 className="text-2xl font-bold text-gray-900">Plano Profissional</h3>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center ${
+                store?.subscription_status === 'active'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              }`}>
                   </div>
-                </div>
+                {store?.subscription_status === 'active' ? 'Ativo' : 'Inativo'}
               </div>
             </div>
             
