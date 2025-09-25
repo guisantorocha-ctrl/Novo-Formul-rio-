@@ -62,12 +62,13 @@ const Register: React.FC = () => {
       setSuccess(true);
     } catch (error: any) {
       console.error('Erro no cadastro:', error);
-      if (error.message?.includes('User already registered')) {
+      const errorMessage = error?.message || '';
+      if (errorMessage.includes('User already registered')) {
         setError('Este email já está cadastrado. Tente fazer login.');
-      } else if (error.message?.includes('Invalid email')) {
+      } else if (errorMessage.includes('Invalid email')) {
         setError('Email inválido. Verifique o formato do email.');
       } else {
-        setError(error.message || 'Erro ao criar conta. Tente novamente.');
+        setError(errorMessage || 'Erro ao criar conta. Tente novamente.');
       }
       setLoading(false);
     }

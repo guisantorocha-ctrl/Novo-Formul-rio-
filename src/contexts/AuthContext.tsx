@@ -134,19 +134,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) throw error;
+      if (error) throw error;
       
       // The auth state change will handle fetching the store
     } catch (error) {
       console.error('SignIn error:', error);
+      setLoading(false);
       throw error;
-    } finally {
-      // Don't set loading to false here - let the auth state change handle it
     }
   };
 
