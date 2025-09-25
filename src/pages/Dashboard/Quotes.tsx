@@ -18,7 +18,7 @@ const Quotes: React.FC = () => {
   }, [store]);
 
   const fetchQuotes = async () => {
-    if (!store) return;
+    if (!store?.id) return;
     
     try {
       const { data, error } = await supabase

@@ -46,6 +46,11 @@ const Register: React.FC = () => {
       return;
     }
 
+    if (!formData.whatsappNumber) {
+      setError('WhatsApp é obrigatório');
+      setLoading(false);
+      return;
+    }
     try {
       await signUp(formData.email, formData.password, {
         name: formData.name,
@@ -54,11 +59,15 @@ const Register: React.FC = () => {
       });
       
       setSuccess(true);
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
     } catch (error: any) {
-      setError(error.message || 'Erro ao criar conta');
+      console.error('Erro no cadastro:', error);
+      if (error.message?.includes('User already registered')) {
+        setError('Este email já está cadastrado. Tente fazer login.');
+      } else if (error.message?.includes('Invalid email')) {
+        setError('Email inválido. Verifique o formato do email.');
+      } else {
+        setError(error.message || 'Erro ao criar conta. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -74,9 +83,14 @@ const Register: React.FC = () => {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Conta criada com sucesso!</h2>
             <p className="text-gray-600 mb-6">
-              Verifique seu email para confirmar sua conta. Você será redirecionado para o login em alguns segundos.
+              Sua conta foi criada! Você já pode fazer login e começar a usar o sistema.
             </p>
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <button
+              onClick={() => navigate('/login')}
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+            >
+              Ir para Login
+            </button>
           </div>
         </div>
       </div>

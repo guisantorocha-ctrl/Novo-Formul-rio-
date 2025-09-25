@@ -41,14 +41,14 @@ const ScaffoldForm: React.FC = () => {
       const { data, error } = await supabase
         .from('stores')
         .select('name, whatsapp_number, subscription_status, subscription_expires_at')
-        .eq('id', storeId)
+        .eq('id', parseInt(storeId))
         .single();
 
       if (error) throw error;
 
       if (data) {
         const isActive = data.subscription_status === 'active' && 
-                        new Date(data.subscription_expires_at) > new Date();
+                        (!data.subscription_expires_at || new Date(data.subscription_expires_at) > new Date());
         
         setStoreActive(isActive);
         setStoreName(data.name);
@@ -121,7 +121,7 @@ const ScaffoldForm: React.FC = () => {
       const { error } = await supabase
         .from('quotes')
         .insert({
-          store_id: storeId,
+          store_id: parseInt(storeId!),
           client_name: clientName,
           client_phone: clientPhone,
           client_email: clientEmail,

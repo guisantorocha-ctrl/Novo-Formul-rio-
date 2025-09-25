@@ -22,7 +22,14 @@ const Login: React.FC = () => {
       await signIn(email, password);
       navigate('/dashboard');
     } catch (error: any) {
-      setError(error.message || 'Erro ao fazer login');
+      console.error('Erro no login:', error);
+      if (error.message?.includes('Invalid login credentials')) {
+        setError('Email ou senha incorretos. Verifique seus dados.');
+      } else if (error.message?.includes('Email not confirmed')) {
+        setError('Email não confirmado. Verifique sua caixa de entrada.');
+      } else {
+        setError(error.message || 'Erro ao fazer login. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }

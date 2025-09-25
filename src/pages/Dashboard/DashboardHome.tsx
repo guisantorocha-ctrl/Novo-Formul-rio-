@@ -10,7 +10,7 @@ const DashboardHome: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const { store } = useAuth();
   
-  const formUrl = store ? `${window.location.origin}/form/${store.id}` : '';
+  const formUrl = store?.id ? `${window.location.origin}/form/${store.id}` : '';
 
   useEffect(() => {
     if (store) {
@@ -19,7 +19,7 @@ const DashboardHome: React.FC = () => {
   }, [store]);
 
   const fetchQuotes = async () => {
-    if (!store) return;
+    if (!store?.id) return;
     
     try {
       const { data, error } = await supabase

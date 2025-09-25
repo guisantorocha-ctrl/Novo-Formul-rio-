@@ -81,28 +81,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string, storeData: Partial<Store>) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`
+      }
     });
 
-    if (error) throw error;
+    if (authError) throw authError;
 
-    if (data.user) {
+    if (authData.user) {
       // Create store record
-      const { error: storeError } = await supabase
+      const { data: storeData, error: storeError } = await supabase
         .from('stores')
         .insert({
-          user_id: data.user.id,
+          user_id: authData.user.id,
           name: storeData.name,
           email: email,
           phone: storeData.phone,
           whatsapp_number: storeData.whatsapp_number,
           subscription_status: 'inactive',
           subscription_expires_at: null
-        });
+        })
+        .select()
+        .single();
 
       if (storeError) throw storeError;
+      
+      // Set the store data immediately if user is confirmed
+      if (authData.user.email_confirmed_at) {
+        setStore(storeData);
+      }
     }
   };
 
