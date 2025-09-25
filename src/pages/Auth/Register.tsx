@@ -51,6 +51,7 @@ const Register: React.FC = () => {
       setLoading(false);
       return;
     }
+    
     try {
       await signUp(formData.email, formData.password, {
         name: formData.name,
@@ -68,7 +69,6 @@ const Register: React.FC = () => {
       } else {
         setError(error.message || 'Erro ao criar conta. Tente novamente.');
       }
-    } finally {
       setLoading(false);
     }
   };

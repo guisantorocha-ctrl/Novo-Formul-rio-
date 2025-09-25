@@ -68,19 +68,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', userId)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No store found - this is ok for new users
+          console.log('No store found for user:', userId);
+          setStore(null);
+          return;
+        }
         throw error;
       }
 
       setStore(data);
     } catch (error) {
       console.error('Error fetching store:', error);
+      setStore(null);
     } finally {
       setLoading(false);
     }
   };
 
   const signUp = async (email: string, password: string, storeData: Partial<Store>) => {
+    setLoading(true);
+    try {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -93,14 +102,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (authData.user) {
       // Create store record
-      const { data: storeData, error: storeError } = await supabase
+        const { data: newStore, error: storeError } = await supabase
         .from('stores')
         .insert({
           user_id: authData.user.id,
-          name: storeData.name,
+            name: storeData.name || '',
           email: email,
-          phone: storeData.phone,
-          whatsapp_number: storeData.whatsapp_number,
+            phone: storeData.phone || '',
+            whatsapp_number: storeData.whatsapp_number || '',
           subscription_status: 'inactive',
           subscription_expires_at: null
         })
@@ -111,27 +120,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Set the store data immediately if user is confirmed
       if (authData.user.email_confirmed_at) {
-        setStore(storeData);
+          setStore(newStore);
       }
+    }
+    } catch (error) {
+      console.error('SignUp error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signIn = async (email: string, password: string) => {
+    setLoading(true);
+    try {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) throw error;
+      
+      // The auth state change will handle fetching the store
+    } catch (error) {
+      console.error('SignIn error:', error);
+      throw error;
+    } finally {
+      // Don't set loading to false here - let the auth state change handle it
+    }
   };
 
   const signOut = async () => {
+    setLoading(true);
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) {
+      console.error('SignOut error:', error);
+      throw error;
+    }
+    setLoading(false);
   };
 
   const refreshStore = async () => {
     if (user) {
+      setLoading(true);
       await fetchStore(user.id);
     }
   };
